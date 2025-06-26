@@ -1,2 +1,7 @@
 onlyBuiltDependencies:
+  - canvas
   - esbuild
+  - onnxruntime-node
+  - protobufjs
+  - sharp
+  - tree-sitter
