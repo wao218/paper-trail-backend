@@ -1,11 +1,13 @@
 import express from 'express';
 import multer from 'multer';
 import uploadRouter from './routes/upload';
+import chatRouter from './routes/chat';
 
 const app = express();
 
 app.use(express.json());
 app.use('/upload', uploadRouter);
+app.use('/chat', chatRouter);
 
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
