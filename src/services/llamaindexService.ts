@@ -12,7 +12,7 @@ Settings.embedModel = new OpenAIEmbedding({
   model: 'text-embedding-3-small',
 });
 
-export async function handleUpload(filePath) {
+export async function handleUpload(filePath: string) {
   // 1. Read and Parse Documents and wrap text into LlamaIndex Document
   const reader = new PDFReader();
   const documents = await reader.loadData(filePath);
