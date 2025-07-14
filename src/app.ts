@@ -2,9 +2,11 @@ import express from 'express';
 import multer from 'multer';
 import uploadRouter from './routes/upload';
 import chatRouter from './routes/chat';
+import cors from 'cors';
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use('/upload', uploadRouter);
 app.use('/chat', chatRouter);
