@@ -1,5 +1,5 @@
-import { ChromaVectorStore } from '@llamaindex/chroma';
-import { OllamaEmbedding } from '@llamaindex/ollama';
+import { SupabaseVectorStore } from '@llamaindex/supabase';
+import { OpenAIEmbedding } from '@llamaindex/openai';
 import { PDFReader } from '@llamaindex/readers/pdf';
 import {
   Settings,
@@ -7,7 +7,10 @@ import {
   VectorStoreIndex,
 } from 'llamaindex';
 
-Settings.embedModel = new OllamaEmbedding({ model: 'nomic-embed-text' });
+Settings.embedModel = new OpenAIEmbedding({
+  apiKey: process.env.OPENAI_API_KEY,
+  model: 'text-embedding-3-small',
+});
 
 export async function handleUpload(filePath) {
   // 1. Read and Parse Documents and wrap text into LlamaIndex Document
@@ -15,11 +18,11 @@ export async function handleUpload(filePath) {
   const documents = await reader.loadData(filePath);
 
   // 2. Embed and index documents into chroma
-  const vectorStore = new ChromaVectorStore({
-    collectionName: 'documents',
-    chromaClientParams: {
-      path: 'http://localhost:8000',
-    },
+
+  const vectorStore = new SupabaseVectorStore({
+    supabaseUrl: process.env.SUPABASE_URL,
+    supabaseKey: process.env.SUPABASE_KEY,
+    table: 'documents',
   });
 
   const storageContext = await storageContextFromDefaults({ vectorStore });
