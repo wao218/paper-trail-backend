@@ -6,7 +6,16 @@ import cors from 'cors';
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://paper-trail-frontend.vercel.app',
+];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+  })
+);
 app.use(express.json());
 app.use('/upload', uploadRouter);
 app.use('/chat', chatRouter);
