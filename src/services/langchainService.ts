@@ -1,5 +1,6 @@
-import { OllamaEmbeddings, ChatOllama } from '@langchain/ollama';
-import { Chroma } from '@langchain/community/vectorstores/chroma';
+import { createClient } from '@supabase/supabase-js';
+import { ChatOpenAI, OpenAIEmbeddings } from '@langchain/openai';
+import { SupabaseVectorStore } from '@langchain/community/vectorstores/supabase';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { combineDocuments } from '../utils/combineDocuments';
@@ -9,17 +10,23 @@ import {
 } from '@langchain/core/runnables';
 import { formatConvHistory } from '../utils/formatConvHistory';
 
-const embeddings = new OllamaEmbeddings({
-  model: 'nomic-embed-text',
-  baseUrl: 'http://localhost:11434',
+const embeddings = new OpenAIEmbeddings({
+  model: 'text-embedding-3-small',
 });
 
-const vectorStore = new Chroma(embeddings, {
-  collectionName: 'documents',
+const supabaseClient = createClient(
+  process.env.SUPABASE_URL as string,
+  process.env.SUPABASE_KEY as string
+);
+
+const vectorStore = new SupabaseVectorStore(embeddings, {
+  client: supabaseClient,
+  tableName: 'documents',
+  queryName: 'match_documents',
 });
 
-const llm = new ChatOllama({
-  model: 'llama3.2',
+const llm = new ChatOpenAI({
+  model: 'gpt-4.1-nano-2025-04-14',
 });
 
 const retriever = vectorStore.asRetriever();
